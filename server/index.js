@@ -6,6 +6,8 @@ const http = require('http');
 const { Server } = require('socket.io');
 const database = require("./config/db");
 const authRoutes = require('./routes/authRoutes');
+const gigRoutes = require('./routes/gigRoutes');
+const bidRoutes = require('./routes/bidRoutes');
 
 dotenv.config();
 
@@ -32,6 +34,8 @@ app.use(cors({
   credentials: true 
 }));
 app.use('/api/auth', authRoutes);
+app.use('/api/gigs', gigRoutes);
+app.use('/api/bids', bidRoutes);
 
 app.get('/', (req, res) => {
   res.send('GigFlow API is running...');
