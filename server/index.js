@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const http = require('http'); 
 const { Server } = require('socket.io');
 const database = require("./config/db");
+const authRoutes = require('./routes/authRoutes');
 
 dotenv.config();
 
@@ -23,20 +24,19 @@ const io = new Server(server, {
   }
 });
 
-// Middleware
-app.use(express.json());
-app.use(cookieParser()); // Parses cookies attached to the client request
-app.use(cors({
-  origin: process.env.CLIENT_URL, // Must match frontend URL exactly
-  credentials: true // Critical for HttpOnly Cookies
-}));
 
-// Placeholder for Routes (We will add these next)
+app.use(express.json());
+app.use(cookieParser()); 
+app.use(cors({
+  origin: process.env.CLIENT_URL, 
+  credentials: true 
+}));
+app.use('/api/auth', authRoutes);
+
 app.get('/', (req, res) => {
   res.send('GigFlow API is running...');
 });
 
-// Socket.io Logic
 io.on('connection', (socket) => {
   console.log(`User Connected: ${socket.id}`);
 
@@ -47,10 +47,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// Make 'io' accessible in routes/controllers
 app.set('socketio', io);
 
-// Error Handling Middleware
+
 app.use((err, req, res, next) => {
   const status = err.status || 500;
   const message = err.message || "Something went wrong!";
